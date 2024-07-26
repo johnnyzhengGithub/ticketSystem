@@ -1,62 +1,60 @@
 const express = require('express');
-const path = require('path');
+const app = express();
+const cors = require('cors');
 const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes');
-const ticketRoutes = require('./routes/ticketRoutes');
-const userRoutes = require('./routes/userRoutes');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
-const { Server } = require('ws');
+const mongoose = require('mongoose');
+const path = require('path');
+const http = require('http');
+const socketIO = require('socket.io');
 
-// Load environment variables from .env file
 dotenv.config();
 
-// Connect to MongoDB
-connectDB();
-
-// Initialize the Express application
-const app = express();
-
-// Middleware to parse JSON requests
+// Middleware
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-// Serve static files from the public directory
+// Database connection
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.log(err));
+
+// Static file serving
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve login.html as the default page for the root URL
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/tickets', require('./routes/ticketRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+
+// Serve HTML files
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-
-// Define routes for authentication, tickets, and users
-app.use('/api/auth', authRoutes);
-app.use('/api/tickets', ticketRoutes);
-app.use('/api/users', userRoutes);
-
-// Serve Swagger documentation at /api-docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Start the server and listen on the specified port
-const server = app.listen(process.env.PORT || 5000, () => {
-    console.log(`Server running on port ${process.env.PORT || 5000}`);
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// Initialize WebSocket server
-const wss = new Server({ server });
+app.get('/customer.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'customer.html'));
+});
 
-// Handle WebSocket connections
-wss.on('connection', ws => {
+app.get('/register.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+// Server setup
+const server = http.createServer(app);
+const io = socketIO(server);
+
+io.on('connection', (socket) => {
     console.log('New client connected');
-
-    // Handle incoming messages from clients
-    ws.on('message', message => {
-        console.log(`Received message => ${message}`);
-    });
-
-    // Handle client disconnection
-    ws.on('close', () => {
+    socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
 });
+
+// Port
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
