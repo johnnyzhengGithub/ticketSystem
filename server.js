@@ -1,5 +1,4 @@
 const express = require('express');
-const app = express();
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
@@ -9,7 +8,10 @@ const socketIO = require('socket.io');
 
 dotenv.config();
 
-// Middleware
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -22,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 // Static file serving
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
+// API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/tickets', require('./routes/ticketRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
@@ -44,10 +46,7 @@ app.get('/register.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
-// Server setup
-const server = http.createServer(app);
-const io = socketIO(server);
-
+// Socket.io connection
 io.on('connection', (socket) => {
     console.log('New client connected');
     socket.on('disconnect', () => {
@@ -55,6 +54,5 @@ io.on('connection', (socket) => {
     });
 });
 
-// Port
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
