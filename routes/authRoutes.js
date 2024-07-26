@@ -1,11 +1,11 @@
 // Import express and auth controllers
 const express = require('express');
-const router = express.Router();
-const { register, login, getMe } = require('../controllers/authController');
-const { protect } = require('../middleware/authMiddleware');
+const { register, login } = require('../controllers/authController');
 
+const router = express.Router();
+
+// Define routes for registration and login
 router.post('/register', register);
 router.post('/login', login);
-router.get('/me', protect, getMe);
 
 module.exports = router;
