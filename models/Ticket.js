@@ -1,14 +1,30 @@
-// Import mongoose module
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-// Define Ticket schema
-const TicketSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    status: { type: String, enum: ['open', 'in-progress', 'closed'], default: 'open' },
-    assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+const TicketSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ['open', 'in_progress', 'closed'],
+        default: 'open'
+    },
+    assignedTo: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }
 }, { timestamps: true });
 
-// Export the Ticket model
 module.exports = mongoose.model('Ticket', TicketSchema);
