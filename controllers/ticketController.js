@@ -1,24 +1,26 @@
 const Ticket = require('../models/Ticket');
+const User = require('../models/User'); // Add this line to import the User model
 
 // Create a new ticket
 exports.createTicket = async (req, res) => {
-    const { title, description, status, assignedTo } = req.body;
     try {
-        console.log('Creating ticket:', req.body);
-        const ticket = await Ticket.create({ title, description, status, assignedTo, createdBy: req.user._id });
+        const { title, description, status, assignedTo } = req.body;
+        const userId = req.user.id; // Assuming req.user contains the authenticated user's details
+        const user = await User.findById(userId);
 
-        // Notify admin of the new ticket
-        const adminUsers = await User.find({ role: 'admin' });
-        adminUsers.forEach(async (admin) => {
-            admin.notifications.push({ message: `New ticket created: ${title}` });
-            await admin.save();
+        const newTicket = new Ticket({
+            title,
+            description,
+            status,
+            assignedTo,
+            createdBy: user
         });
 
-        console.log('Ticket created:', ticket);
-        res.status(201).json({ success: true, ticket });
+        await newTicket.save();
+        res.status(201).json({ success: true, ticket: newTicket });
     } catch (error) {
         console.error('Error creating ticket:', error);
-        res.status(400).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
