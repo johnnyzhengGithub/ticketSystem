@@ -1,23 +1,18 @@
+// ticketRoutes.js
 const express = require('express');
 const { protect } = require('../middleware/authMiddleware');
 const { authorize } = require('../middleware/roleMiddleware');
-const {
-    createTicket,
-    getTickets,
-    getTicketById,
-    updateTicket,
-    deleteTicket
-} = require('../controllers/ticketController');
-
+const { createTicket, getTickets, getTicket, updateTicket, deleteTicket } = require('../controllers/ticketController');
 const router = express.Router();
 
 router.route('/')
-    .post(protect, authorize('admin', 'support', 'customer'), createTicket)  // Allow customers to create tickets
-    .get(protect, getTickets);
+    .get(protect, authorize(['admin', 'support', 'customer']), getTickets)  // Allow customers to fetch their own tickets
+    .post(protect, authorize(['admin', 'support', 'customer']), createTicket);
 
 router.route('/:id')
-    .get(protect, getTicketById)
-    .put(protect, authorize('admin', 'support'), updateTicket)
-    .delete(protect, authorize('admin', 'support'), deleteTicket);
+    .get(protect, authorize(['admin', 'customer']), getTicket)
+    .put(protect, authorize(['admin', 'customer']), updateTicket)
+    .delete(protect, authorize(['admin', 'customer']), deleteTicket);
 
 module.exports = router;
+

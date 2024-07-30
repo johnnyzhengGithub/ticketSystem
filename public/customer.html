@@ -39,7 +39,7 @@
         </div>
         <div class="form-group">
             <label for="ticketStatus">Status:</label>
-            <select id="ticketStatus" required>
+            <select id="ticketStatus">
                 <option value="open">Open</option>
                 <option value="in_progress">In Progress</option>
                 <option value="closed">Closed</option>
@@ -47,7 +47,7 @@
         </div>
         <button type="submit">Save Ticket</button>
     </form>
-    <h3>Tickets List</h3>
+    <h2>Tickets List</h2>
     <table>
         <thead>
         <tr>
@@ -59,131 +59,183 @@
             <th>Actions</th>
         </tr>
         </thead>
-        <tbody id="ticketsTable">
-        <!-- Tickets will be loaded here -->
+        <tbody id="ticketsList">
         </tbody>
     </table>
 </div>
-
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ticketForm = document.getElementById('ticketForm');
-        const ticketsTable = document.getElementById('ticketsTable');
-        const ticketIdInput = document.getElementById('ticketId');
-        const ticketTitleInput = document.getElementById('ticketTitle');
-        const ticketDescriptionInput = document.getElementById('ticketDescription');
-        const ticketStatusInput = document.getElementById('ticketStatus');
+    // Ensure the DOM is fully loaded before running the script
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Retrieve the token, userId, and userRole from localStorage
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        const userRole = localStorage.getItem('role');
 
-        // Fetch tickets and populate table
-        async function fetchTickets() {
-            const token = localStorage.getItem('token');
-            const response = await fetch('/api/tickets', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const tickets = await response.json();
-            console.log('Fetched tickets:', tickets); // Log the fetched tickets
-            if (!tickets.success) {
-                console.error('Failed to fetch tickets:', tickets.message);
-                return;
-            }
-            if (tickets.tickets.length === 0) {
-                console.log('No tickets found.');
-                return;
-            }
-            // Filter tickets to only show those created by the current user
-            const currentUserEmail = localStorage.getItem('email');
-            const userTickets = tickets.tickets.filter(ticket => ticket.createdBy.email === currentUserEmail);
-            ticketsTable.innerHTML = userTickets.map(ticket => `
-                    <tr>
-                        <td>${ticket.title}</td>
-                        <td>${ticket.description}</td>
-                        <td>${ticket.status}</td>
-                        <td>${ticket.assignedTo ? ticket.assignedTo.name : ''}</td>
-                        <td>${ticket.createdBy.name}</td>
-                        <td>
-                            <button class="edit" onclick="editTicket('${ticket._id}')">Edit</button>
-                            <button class="delete" onclick="deleteTicket('${ticket._id}')">Delete</button>
-                        </td>
-                    </tr>
-                `).join('');
-        }
 
-        // Edit ticket
-        window.editTicket = async function (id) {
-            console.log(`Editing ticket with ID: ${id}`); // Log the ticket ID being edited
-            const token = localStorage.getItem('token');
-            const response = await fetch(`/api/tickets/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+        // Log the values to the console
+        console.log('Token:', token);
+        console.log('User ID:', userId);
+        console.log('User Role:', userRole);
+
+        // // If any of the authentication details are missing, redirect to the login page
+        // if (!token || !userId || !userRole) {
+        //     alert('User not authenticated. Redirecting to login.');
+        //     // window.location.href = '/login.html';
+        //     return;
+        // }
+
+        // Fetch tickets and render them in the table
+        const fetchTickets = async () => {
+            try {
+                const response = await fetch('/api/tickets', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server Error');
                 }
-            });
-            const ticket = await response.json();
-            console.log('Ticket to edit:', ticket); // Log the ticket to be edited
-            ticketIdInput.value = ticket.ticket._id;
-            ticketTitleInput.value = ticket.ticket.title;
-            ticketDescriptionInput.value = ticket.ticket.description;
-            ticketStatusInput.value = ticket.ticket.status;
+
+                const data = await response.json();
+                if (data.success) {
+                    console.log('Fetched tickets:', data.data);
+                    const ticketsList = document.getElementById('ticketsList');
+                    ticketsList.innerHTML = '';
+                    // Only show tickets created by the logged-in user
+                    data.tickets.forEach(ticket => {
+                        if (ticket.createdBy._id === userId) {
+                            ticketsList.innerHTML += `
+                                <tr>
+                                    <td>${ticket.title}</td>
+                                    <td>${ticket.description}</td>
+                                    <td>${ticket.status}</td>
+                                    <td>${ticket.assignedTo ? ticket.assignedTo.name : 'Unassigned'}</td>
+                                    <td>${ticket.createdBy.name}</td>
+                                    <td>
+                                        <button class="edit" onclick="editTicket('${ticket._id}')">Edit</button>
+                                        <button class="delete" onclick="deleteTicket('${ticket._id}')">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        }
+                    });
+                } else {
+                    console.error('Failed to fetch tickets:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching tickets:', error);
+            }
         };
 
-        // Form submission for creating or updating ticket
-        ticketForm.addEventListener('submit', async function (e) {
+        // Fetch tickets when the page loads
+        fetchTickets();
+
+        // Handle ticket form submission
+        document.getElementById('ticketForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const id = ticketIdInput.value;
-            const title = ticketTitleInput.value;
-            const description = ticketDescriptionInput.value;
-            const status = ticketStatusInput.value;
-            const method = id ? 'PUT' : 'POST';
-            const url = id ? `/api/tickets/${id}` : '/api/tickets';
-            const token = localStorage.getItem('token');
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ title, description, status })
-            });
-            const data = await response.json();
-            if (data.success) {
-                alert('Ticket saved successfully');
-                ticketForm.reset();
-                fetchTickets();
-            } else {
-                alert('Error: ' + data.message);
+            const ticketId = document.getElementById('ticketId').value;
+            const title = document.getElementById('ticketTitle').value;
+            const description = document.getElementById('ticketDescription').value;
+            const status = document.getElementById('ticketStatus').value;
+
+            const ticketData = { title, description, status };
+
+            try {
+                const method = ticketId ? 'PUT' : 'POST';
+                const endpoint = ticketId ? `/api/tickets/${ticketId}` : '/api/tickets';
+                const response = await fetch(endpoint, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(ticketData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server Error');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Ticket saved successfully');
+                    fetchTickets();
+                    document.getElementById('ticketForm').reset();
+                } else {
+                    alert('Error saving ticket: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error saving ticket:', error);
+                alert('An error occurred while saving the ticket.');
             }
         });
 
-        // Delete ticket
-        window.deleteTicket = async function (id) {
-            if (confirm('Are you sure you want to delete this ticket?')) {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`/api/tickets/${id}`, {
+        // Handle logout functionality
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('role');
+            window.location.href = '/login.html';
+        });
+
+        // Handle edit ticket functionality
+        window.editTicket = async (ticketId) => {
+            try {
+                const response = await fetch(`/api/tickets/${ticketId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server Error');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    const ticket = data.data;
+                    document.getElementById('ticketId').value = ticket._id;
+                    document.getElementById('ticketTitle').value = ticket.title;
+                    document.getElementById('ticketDescription').value = ticket.description;
+                    document.getElementById('ticketStatus').value = ticket.status;
+                } else {
+                    alert('Error fetching ticket: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching ticket:', error);
+            }
+        };
+
+        // Handle delete ticket functionality
+        window.deleteTicket = async (ticketId) => {
+            if (!confirm('Are you sure you want to delete this ticket?')) return;
+            try {
+                const response = await fetch(`/api/tickets/${ticketId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+
+                if (!response.ok) {
+                    throw new Error('Server Error');
+                }
+
                 const data = await response.json();
                 if (data.success) {
                     alert('Ticket deleted successfully');
                     fetchTickets();
                 } else {
-                    alert('Error: ' + data.message);
+                    alert('Error deleting ticket: ' + data.message);
                 }
+            } catch (error) {
+                console.error('Error deleting ticket:', error);
             }
         };
-
-        // Logout
-        document.getElementById('logoutButton').addEventListener('click', function () {
-            localStorage.removeItem('token');
-            window.location.href = '/login.html';
-        });
-
-        // Initial fetch of tickets
-        fetchTickets();
     });
 </script>
 </body>

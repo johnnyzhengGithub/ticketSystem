@@ -1,46 +1,97 @@
-// Import User model and jwt, dotenv modules
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
-
-// Load environment variables from .env file
-dotenv.config();
+const bcrypt = require('bcryptjs'); // Use bcryptjs instead of bcrypt
 
 // Register a new user
-exports.register = async (req, res) => {
+const register = async (req, res) => {
     const { name, email, password, role } = req.body;
+    console.log('Password before hashing:', password);
+
     try {
-        // Create a new user in the database
-        const user = await User.create({ name, email, password, role });
+        let user = await User.findOne({ email });
 
-        // Generate a JWT token
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        if (user) {
+            return res.status(400).json({ success: false, message: 'User already exists' });
+        }
 
-        // Respond with the token
-        res.status(201).json({ success: true, token });
-    } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        // const salt = await bcrypt.genSalt(10);
+        // const hashedPassword = await bcrypt.hash(password, salt);
+
+        console.log('Hashed password during registration:', password); // Log the hashed password
+
+        user = new User({
+            name,
+            email,
+            password,
+            role
+        });
+
+        await user.save();
+
+        const payload = {
+            user: {
+                id: user.id,
+                role: user.role
+            }
+        };
+
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: 360000 },
+            (err, token) => {
+                if (err) throw err;
+                res.json({ success: true, token, user: { role: user.role } });
+            }
+        );
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
     }
 };
 
-// Login a user
-exports.login = async (req, res) => {
+// Authenticate user & get token
+const login = async (req, res) => {
     const { email, password } = req.body;
-    try {
-        // Find the user by email
-        const user = await User.findOne({ email });
 
-        // Check if user exists and password matches
-        if (!user || !(await user.matchPassword(password))) {
-            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    console.log('Login attempt:', { email, password });
+
+    try {
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
 
-        // Generate a JWT token
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const isMatch = await bcrypt.compare(password, user.password);
 
-        // Respond with the token and user details
-        res.status(200).json({ success: true, token, user: { role: user.role, email: user.email } });
-    } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: 'Invalid credentials' });
+        }
+
+        // Create token
+        const token = jwt.sign(
+            { user: { id: user.id, role: user.role } },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
+
+        console.log('token:', token);
+
+        // Set token and user details in localStorage
+        res.json({
+            success: true,
+            token,
+            userId: user.id,
+            role: user.role
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
     }
+};
+
+module.exports = {
+    register,
+    login
 };

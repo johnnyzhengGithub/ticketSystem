@@ -114,16 +114,6 @@
     </table>
 </div>
 
-
-
-
-
-
-
-
-
-
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const userForm = document.getElementById('userForm');
@@ -142,15 +132,7 @@
         const ticketStatusInput = document.getElementById('ticketStatus');
         const ticketAssignedToInput = document.getElementById('ticketAssignedTo');
 
-        const userManagementSection = document.getElementById('userManagementSection');
 
-        // Fetch user role from token or another source
-        const userRole = localStorage.getItem('role');
-
-        // Hide user management section for non-admins
-        if (userRole !== 'admin') {
-            userManagementSection.classList.add('hidden');
-        }
 
         // Fetch users and populate table
         async function fetchUsers() {
@@ -161,8 +143,8 @@
                 }
             });
             const users = await response.json();
-            ticketAssignedToInput.innerHTML = '<option value="">Unassigned</option>';
-            usersTable.innerHTML = users.map(user => `
+            if (users.success) {
+                usersTable.innerHTML = users.data.map(user => `
                     <tr>
                         <td>${user.name}</td>
                         <td>${user.email}</td>
@@ -173,11 +155,14 @@
                         </td>
                     </tr>
                 `).join('');
-            users.forEach(user => {
-                if (user.role === 'support' || user.role === 'admin') {
-                    ticketAssignedToInput.innerHTML += `<option value="${user._id}">${user.name}</option>`;
-                }
-            });
+                users.data.forEach(user => {
+                    if (user.role === 'admin') {
+                        ticketAssignedToInput.innerHTML += `<option value="${user._id}">${user.name}</option>`;
+                    }
+                });
+            } else {
+                console.error('Failed to fetch users:', users.message);
+            }
         }
 
         // Fetch tickets and populate table
@@ -190,30 +175,27 @@
             });
             const tickets = await response.json();
             console.log('Fetched tickets:', tickets); // Log the fetched tickets
-            if (!tickets.success) {
-                console.error('Failed to fetch tickets:', tickets.message);
-                return;
+            if (tickets.success && Array.isArray(tickets.tickets)) {
+                ticketsTable.innerHTML = tickets.tickets.map(ticket => `
+            <tr>
+                <td>${ticket.title}</td>
+                <td>${ticket.description}</td>
+                <td>${ticket.status}</td>
+                <td>${ticket.assignedTo ? ticket.assignedTo.name : ''}</td>
+                <td>${ticket.createdBy ? ticket.createdBy.name : ''}</td>
+                <td>
+                    <button class="edit" onclick="editTicket('${ticket._id}')">Edit</button>
+                    <button class="delete" onclick="deleteTicket('${ticket._id}')">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+            } else {
+                console.error('Failed to fetch tickets or no tickets available:', tickets.message);
             }
-            if (tickets.tickets.length === 0) {
-                console.log('No tickets found.');
-                return;
-            }
-            ticketsTable.innerHTML = tickets.tickets.map(ticket => `
-                    <tr>
-                        <td>${ticket.title}</td>
-                        <td>${ticket.description}</td>
-                        <td>${ticket.status}</td>
-                        <td>${ticket.assignedTo ? ticket.assignedTo.name : ''}</td>
-                        <td>${ticket.createdBy.name}</td>
-                        <td>
-                            <button class="edit" onclick="editTicket('${ticket._id}')">Edit</button>
-                            <button class="delete" onclick="deleteTicket('${ticket._id}')">Delete</button>
-                        </td>
-                    </tr>
-                `).join('');
         }
 
-        // Edit ticket
+
+        // Function to edit a ticket
         window.editTicket = async function (id) {
             console.log(`Editing ticket with ID: ${id}`); // Log the ticket ID being edited
             const token = localStorage.getItem('token');
@@ -223,12 +205,16 @@
                 }
             });
             const ticket = await response.json();
-            console.log('Ticket to edit:', ticket); // Log the ticket to be edited
-            ticketIdInput.value = ticket.ticket._id;
-            ticketTitleInput.value = ticket.ticket.title;
-            ticketDescriptionInput.value = ticket.ticket.description;
-            ticketStatusInput.value = ticket.ticket.status;
-            ticketAssignedToInput.value = ticket.ticket.assignedTo ? ticket.ticket.assignedTo._id : '';
+            if (ticket.success) {
+                console.log('Ticket to edit:', ticket); // Log the ticket to be edited
+                ticketIdInput.value = ticket.data._id;
+                ticketTitleInput.value = ticket.data.title;
+                ticketDescriptionInput.value = ticket.data.description;
+                ticketStatusInput.value = ticket.data.status;
+                ticketAssignedToInput.value = ticket.data.assignedTo ? ticket.data.assignedTo._id : '';
+            } else {
+                console.error('Failed to fetch ticket:', ticket.message);
+            }
         };
 
         // Form submission for creating or updating user
@@ -260,7 +246,7 @@
             }
         });
 
-        // Edit user
+        // Edit user function
         window.editUser = async function (id) {
             const token = localStorage.getItem('token');
             const response = await fetch(`/api/users/${id}`, {
@@ -269,14 +255,18 @@
                 }
             });
             const user = await response.json();
-            userIdInput.value = user._id;
-            userNameInput.value = user.name;
-            userEmailInput.value = user.email;
-            userPasswordInput.value = '';
-            userRoleInput.value = user.role;
+            if (user.success) {
+                userIdInput.value = user.data._id;
+                userNameInput.value = user.data.name;
+                userEmailInput.value = user.data.email;
+                userPasswordInput.value = '';
+                userRoleInput.value = user.data.role;
+            } else {
+                console.error('Failed to fetch user:', user.message);
+            }
         };
 
-        // Delete user
+        // Function to delete a user
         window.deleteUser = async function (id) {
             if (confirm('Are you sure you want to delete this user?')) {
                 const token = localStorage.getItem('token');
@@ -325,7 +315,7 @@
             }
         });
 
-        // Delete ticket
+        // Function to delete a ticket
         window.deleteTicket = async function (id) {
             if (confirm('Are you sure you want to delete this ticket?')) {
                 const token = localStorage.getItem('token');
@@ -345,7 +335,7 @@
             }
         };
 
-        // Logout
+        // Logout function
         document.getElementById('logoutButton').addEventListener('click', function () {
             localStorage.removeItem('token');
             window.location.href = '/login.html';

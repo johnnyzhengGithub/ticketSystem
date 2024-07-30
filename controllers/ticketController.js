@@ -1,85 +1,99 @@
 const Ticket = require('../models/Ticket');
-const User = require('../models/User'); // Add this line to import the User model
 
-// Create a new ticket
+// @desc    Create a new ticket
+// @route   POST /api/tickets
+// @access  Private
 exports.createTicket = async (req, res) => {
-    try {
-        const { title, description, status, assignedTo } = req.body;
-        const userId = req.user.id; // Assuming req.user contains the authenticated user's details
-        const user = await User.findById(userId);
+    const { title, description, status, assignedTo } = req.body;
 
-        const newTicket = new Ticket({
+    try {
+        const ticket = new Ticket({
             title,
             description,
             status,
             assignedTo,
-            createdBy: user
+            createdBy: req.user._id
         });
 
-        await newTicket.save();
-        res.status(201).json({ success: true, ticket: newTicket });
+        await ticket.save();
+        res.status(201).json({ success: true, data: ticket });
     } catch (error) {
-        console.error('Error creating ticket:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error(error.message);
+        res.status(500).send('Server Error');
     }
 };
 
-// Get all tickets
+// @desc    Get all tickets
+// @route   GET /api/tickets
+// @access  Private
 exports.getTickets = async (req, res) => {
     try {
-        const tickets = await Ticket.find().populate('createdBy assignedTo');
-        res.status(200).json({ success: true, tickets });
-    } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
-    }
-};
-
-// Get a single ticket by ID
-exports.getTicketById = async (req, res) => {
-    try {
-        const ticket = await Ticket.findById(req.params.id).populate('createdBy assignedTo');
-        if (!ticket) {
-            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        let query;
+        // If the user is a customer, show only their tickets
+        if (req.user.role === 'customer') {
+            query = Ticket.find({ createdBy: req.user._id });
         }
-        res.status(200).json({ success: true, ticket });
-    } catch (error) {
-        console.error('Error fetching ticket:', error); // Log any errors
-        res.status(400).json({ success: false, message: error.message });
+        // If the user is an admin or support agent, show all tickets
+        else if (req.user.role === 'admin') {
+            query = Ticket.find();
+        }
+        // If the user role is not recognized, deny access
+        else {
+            return res.status(403).json({ success: false, message: 'User role not authorized' });
+        }
+        const tickets = await query.populate('createdBy').populate('assignedTo');
+        res.status(200).json({ success: true, count: tickets.length, tickets });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
 
-// Update a ticket
-exports.updateTicket = async (req, res) => {
-    const { title, description, status, assignedTo } = req.body;
+// @desc    Get a single ticket
+// @route   GET /api/tickets/:id
+// @access  Private
+exports.getTicket = async (req, res) => {
     try {
         const ticket = await Ticket.findById(req.params.id);
         if (!ticket) {
             return res.status(404).json({ success: false, message: 'Ticket not found' });
         }
-
-        ticket.title = title || ticket.title;
-        ticket.description = description || ticket.description;
-        ticket.status = status || ticket.status;
-        ticket.assignedTo = assignedTo || ticket.assignedTo;
-
-        await ticket.save();
-        res.status(200).json({ success: true, ticket });
+        res.status(200).json({ success: true, data: ticket });
     } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        console.error(error.message);
+        res.status(500).send('Server Error');
     }
 };
 
-// Delete a ticket
+// @desc    Update a ticket
+// @route   PUT /api/tickets/:id
+// @access  Private
+exports.updateTicket = async (req, res) => {
+    try {
+        const ticket = await Ticket.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+        res.status(200).json({ success: true, data: ticket });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+// @desc    Delete a ticket
+// @route   DELETE /api/tickets/:id
+// @access  Private
 exports.deleteTicket = async (req, res) => {
     try {
-        const ticket = await Ticket.findById(req.params.id);
+        const ticket = await Ticket.findByIdAndDelete(req.params.id);
         if (!ticket) {
             return res.status(404).json({ success: false, message: 'Ticket not found' });
         }
 
-        await Ticket.deleteOne({ _id: req.params.id });
-        res.status(200).json({ success: true, message: 'Ticket deleted' });
+        res.status(200).json({ success: true, data: {} });
     } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        console.error(error.message);
+        res.status(500).send('Server Error');
     }
 };
+
