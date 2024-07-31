@@ -17,23 +17,23 @@
     },
     {
       "src": "/login",
-      "dest": "/public/login.html"
+      "dest": "/login.html"
     },
     {
       "src": "/register",
-      "dest": "/public/register.html"
+      "dest": "/register.html"
     },
     {
       "src": "/admin",
-      "dest": "/public/admin.html"
+      "dest": "/admin.html"
     },
     {
       "src": "/customer",
-      "dest": "/public/customer.html"
+      "dest": "/customer.html"
     },
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "/$1"
     }
   ]
 }
