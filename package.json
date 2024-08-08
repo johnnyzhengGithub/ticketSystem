@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "webpack --mode production"
+    "build": "npm run generate-html && webpack --mode production",
+    "generate-html": "mkdir -p dist && cp index.html dist/"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -14,10 +15,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.1",
-    "next": "^14.2.5",
     "nodemailer": "^6.9.14",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "socket.io": "^4.7.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
