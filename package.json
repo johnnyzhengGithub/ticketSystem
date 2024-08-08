@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "vercel-build": "next build"
+    "start": "node server.js",
+    "test": "webpack --mode production"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
