@@ -1,7 +1,7 @@
 // server.js
 const express = require('express');
 const path = require('path');
-const connectDB = require('./config/db');
+const db = require('./config/db');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: './.env' });
@@ -9,7 +9,7 @@ dotenv.config({ path: './.env' });
 const app = express();
 
 // Connect to the database
-connectDB();
+db();
 
 // Middleware
 app.use(express.json());
