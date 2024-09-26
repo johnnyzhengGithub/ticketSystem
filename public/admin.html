@@ -4,21 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 90%; margin: 50px auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .header h2 { margin: 0; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { padding: 10px; border: 1px solid #ddd; }
-        th { background-color: #f4f4f4; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; }
-        input, select { width: 100%; padding: 8px; }
-        button { padding: 10px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
-        button.edit { background-color: #28a745; }
-        button.delete { background-color: #dc3545; }
-        .hidden { display: none; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+        .header h2 {
+            margin: 0;
+            color: #007BFF;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .hidden {
+            display: none;
+        }
+        .section-title {
+            margin-top: 30px;
+            color: #333;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
     </style>
 </head>
 <body>
@@ -27,8 +94,9 @@
         <h2>Admin Dashboard</h2>
         <button id="logoutButton">Logout</button>
     </div>
+
     <div id="userManagementSection">
-        <h2>User Management</h2>
+        <h3 class="section-title">User Management</h3>
         <form id="userForm">
             <input type="hidden" id="userId">
             <div class="form-group">
@@ -53,7 +121,7 @@
             </div>
             <button type="submit">Save User</button>
         </form>
-        <h3>Users List</h3>
+        <h4>Users List</h4>
         <table>
             <thead>
             <tr>
@@ -69,7 +137,7 @@
         </table>
     </div>
 
-    <h2>Ticket Management</h2>
+    <h3 class="section-title">Ticket Management</h3>
     <form id="ticketForm">
         <input type="hidden" id="ticketId">
         <div class="form-group">
@@ -96,7 +164,7 @@
         </div>
         <button type="submit">Save Ticket</button>
     </form>
-    <h3>Tickets List</h3>
+    <h4>Tickets List</h4>
     <table>
         <thead>
         <tr>
@@ -112,6 +180,10 @@
         <!-- Tickets will be loaded here -->
         </tbody>
     </table>
+
+    <div class="footer">
+        <p>&copy; 2024 Support Ticket System. All rights reserved.</p>
+    </div>
 </div>
 
 <script>
@@ -131,8 +203,6 @@
         const ticketDescriptionInput = document.getElementById('ticketDescription');
         const ticketStatusInput = document.getElementById('ticketStatus');
         const ticketAssignedToInput = document.getElementById('ticketAssignedTo');
-
-
 
         // Fetch users and populate table
         async function fetchUsers() {
@@ -174,7 +244,6 @@
                 }
             });
             const tickets = await response.json();
-            console.log('Fetched tickets:', tickets); // Log the fetched tickets
             if (tickets.success && Array.isArray(tickets.tickets)) {
                 ticketsTable.innerHTML = tickets.tickets.map(ticket => `
             <tr>
@@ -194,10 +263,8 @@
             }
         }
 
-
         // Function to edit a ticket
         window.editTicket = async function (id) {
-            console.log(`Editing ticket with ID: ${id}`); // Log the ticket ID being edited
             const token = localStorage.getItem('token');
             const response = await fetch(`/api/tickets/${id}`, {
                 headers: {
@@ -206,7 +273,6 @@
             });
             const ticket = await response.json();
             if (ticket.success) {
-                console.log('Ticket to edit:', ticket); // Log the ticket to be edited
                 ticketIdInput.value = ticket.data._id;
                 ticketTitleInput.value = ticket.data.title;
                 ticketDescriptionInput.value = ticket.data.description;
