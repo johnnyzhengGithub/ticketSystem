@@ -5,14 +5,15 @@
   "scripts": {
     "start": "node server.js",
     "build": "npm run generate-html && webpack --mode production",
-    "generate-html": "mkdir -p dist && cp index.html dist/"
+    "generate-html": "mkdir -p dist && cp public/index.html dist/"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
+    "kerberos": "^2.2.0",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.1",
     "nodemailer": "^6.9.14",

@@ -1,30 +1,10 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/server.js', // Adjust according to your project structure
+    entry: './server.js', // Ensure this points to the correct location of server.js
     output: {
-        path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
-        publicPath: '/', // Ensure this is set correctly for your environment
+        path: path.resolve(__dirname, 'dist'),
     },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                },
-            },
-            {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
-            },
-        ],
-    },
-    devServer: {
-        contentBase: path.join(__dirname, 'dist'),
-        compress: true,
-        port: 9000,
-    },
+    target: 'node', // Set target to node for server-side code
 };
