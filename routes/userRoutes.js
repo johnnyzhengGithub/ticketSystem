@@ -5,7 +5,7 @@ const { authorize } = require('../middleware/roleMiddleware');
 const router = express.Router();
 
 router.route('/')
-    .get(protect, authorize(['admin']), getUsers)
+    .get(protect, authorize(['admin', 'support']), getUsers)
     .post(protect, authorize(['admin']), createUser);
 
 router.route('/:id')

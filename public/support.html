@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+            position: relative;
+            flex-direction: column; /* Allow content to stack vertically if needed */
+        }
+
+        /* Optional: Add some background elements for tech feel */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzEiIGhlaWdodD0iNzEiIHZpZXdCb3g9IjAgMCA3MSA3MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTM1LjUgMFY3MU03MSAzNS41SDBNMzUuNSA3MVYwTDcxdjM1LjVMMCAzNS41VjBNMzUuNSAwTDAgMzUuNUwzNS41IDcxTDcxIDM1LjVMMzUuNSAwWiIgc3Ryb2tlPSIjMUYzQzQ5IiBzdHJva2Utb3BhY2l0eT0iMC4xMiIvPgo8L3N2Zz4='); /* Subtle grid pattern */
+            opacity: 0.3;
+            pointer-events: none;
+            animation: backgroundPan 60s infinite linear;
+        }
+
+         @keyframes backgroundPan {
+             0% { background-position: 0% 0%; }
+             100% { background-position: 100% 100%; }
+         }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.08); /* Slightly transparent white */
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+            backdrop-filter: blur(10px); /* Glassmorphism effect */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+            padding: 40px; /* Increased padding for content */
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00b4d8; /* High-tech color */
+            padding-bottom: 15px; /* Increased padding */
+            margin-bottom: 25px; /* Increased margin */
+        }
+        .header h2 {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            color: #00b4d8; /* High-tech color */
+            font-size: 28px; /* Larger font size */
+            text-shadow: 0 0 8px #00b4d8; /* Glow effect */
+        }
+        button {
+            padding: 10px 20px; /* Increased padding */
+            background: linear-gradient(45deg, #00b4d8, #0077b6); /* Gradient button */
+            color: white;
+            border: none;
+            border-radius: 8px; /* Rounded corners */
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold; /* Bold text */
+            transition: all 0.3s ease-in-out; /* Smooth transition */
+            text-transform: uppercase; /* Uppercase text */
+            letter-spacing: 1px; /* Increased letter spacing */
+        }
+        button:hover {
+            background: linear-gradient(45deg, #0077b6, #023e8a); /* Darker gradient on hover */
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.8); /* Stronger glow on hover */
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0; /* Increased margin */
+            background: rgba(255, 255, 255, 0.05); /* Slightly transparent background */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 16px; /* Increased padding */
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Lighter border for dark theme */
+            color: #e0e0e0; /* Lighter text color */
+        }
+        th {
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly darker header background */
+            color: #90e0ef; /* Highlight color for headers */
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px; /* Increased letter spacing */
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.08); /* Subtle hover effect */
+        }
+        .form-group {
+            margin-bottom: 20px; /* Increased margin */
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b0b0; /* Lighter color */
+            font-size: 14px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 15px; /* Increased padding */
+            border: none; /* Removed default border */
+            border-radius: 8px; /* Rounded corners */
+            background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+            color: #ffffff; /* White text color */
+            font-size: 16px;
+            transition: all 0.3s ease-in-out; /* Smooth transitions */
+            box-sizing: border-box;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+         input:focus, select:focus {
+             outline: none;
+             background: rgba(255, 255, 255, 0.2);
+             box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+             border-color: #00b4d8;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px; /* Increased margin */
+            font-size: 14px;
+            color: #6b778c; /* Subtle color */
+        }
+        .search-bar {
+             margin: 20px 0;
+             display: flex;
+             gap: 10px;
+             align-items: center;
+         }
+         .search-bar input {
+             flex: 1;
+             padding: 10px 15px;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+             border-radius: 8px;
+             background: rgba(255, 255, 255, 0.05);
+             color: #ffffff;
+             font-size: 16px;
+             transition: all 0.3s ease-in-out;
+         }
+         .search-bar input:focus {
+             outline: none;
+             background: rgba(255, 255, 255, 0.08);
+             box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+             border-color: #00b4d8;
+         }
+        .status-select {
+             min-width: 120px;
+             padding: 10px 15px;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+             border-radius: 8px;
+             background: rgba(255, 255, 255, 0.05);
+             color: #ffffff;
+             font-size: 16px;
+             transition: all 0.3s ease-in-out;
+        }
+         .status-select:focus {
+             outline: none;
+             background: rgba(255, 255, 255, 0.08);
+             box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+             border-color: #00b4d8;
+         }
+         /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 5px;
+        }
+        .status-open { background: #28a745; color: #fff; }
+        .status-in_progress { background: #ffc107; color: #333; }
+        .status-closed { background: #dc3545; color: #fff; }
+         /* Comment Modal Styles (Adjusting for dark theme) */
+        #commentModal {
+             background: rgba(0,0,0,0.7); /* Darker overlay */
+        }
+        #commentModal > div {
+             background: rgba(255, 255, 255, 0.08); /* Semi-transparent background */
+             border-radius: 15px;
+             box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+             backdrop-filter: blur(10px);
+             -webkit-backdrop-filter: blur(10px);
+             border: 1px solid rgba( 255, 255, 255, 0.18 );
+             padding: 30px; /* Increased padding */
+        }
+        #commentModal h3 {
+             font-family: 'Orbitron', sans-serif;
+             color: #00b4d8;
+             text-shadow: 0 0 8px #00b4d8;
+             margin-bottom: 20px;
+             font-size: 24px;
+        }
+        #modalCommentsList {
+             max-height: 300px;
+             overflow-y: auto;
+             margin-bottom: 20px; /* Increased margin */
+             padding-right: 10px; /* Add some padding for scrollbar */
+         }
+
+         /* Scrollbar styles for modal comments */
+         #modalCommentsList::-webkit-scrollbar {
+             width: 8px;
+         }
+         #modalCommentsList::-webkit-scrollbar-track {
+             background: rgba(255, 255, 255, 0.05);
+             border-radius: 10px;
+         }
+         #modalCommentsList::-webkit-scrollbar-thumb {
+             background: rgba(255, 255, 255, 0.15);
+             border-radius: 10px;
+         }
+         #modalCommentsList::-webkit-scrollbar-thumb:hover {
+             background: rgba(255, 255, 255, 0.25);
+         }
+
+        #modalCommentForm {
+             margin-top: 10px;
+         }
+         #modalCommentInput {
+             width: 100%;
+             min-height: 80px; /* Increased height */
+             border-radius: 8px;
+             padding: 12px;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+             background: rgba(255, 255, 255, 0.05); /* Semi-transparent background */
+             color: #ffffff;
+             font-size: 14px;
+             resize: vertical;
+             box-sizing: border-box; /* Include padding and border in element's total width and height */
+         }
+         #modalCommentInput:focus {
+             outline: none;
+             background: rgba(255, 255, 255, 0.08);
+             box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+             border-color: #00b4d8;
+         }
+         #modalCommentForm > div {
+             display: flex;
+             gap: 8px;
+             align-items: center;
+             margin-top: 12px; /* Increased margin */
+         }
+         #modalCommentStatus {
+             flex: 1;
+             border-radius: 8px;
+             padding: 10px 12px; /* Increased padding */
+             border: 1px solid rgba(255, 255, 255, 0.1);
+             background: rgba(255, 255, 255, 0.05);
+             color: #ffffff;
+             font-size: 14px;
+             appearance: none; /* Remove default select arrow */
+             background-image: url('data:image/svg+xml;charset=US-ASCII, %3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e0e0e0%22%20d%3D%22M287%2C114.5L145.2%2C256.3L3.5%2C114.5c-4.7-4.7-12.3-4.7-17%2C0c-4.7%2C4.7-4.7%2C12.3%2C0%2C17l152.9%2C152.9c4.7%2C4.7%2C12.3%2C4.7%2C17%2C0l152.9-152.9C291.7%2C126.8%2C291.7%2C119.3%2C287%2C114.5z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
+             background-repeat: no-repeat;
+             background-position: right 10px top 50%;
+             background-size: 12px auto;
+         }
+          #modalCommentStatus:focus {
+             outline: none;
+             background: rgba(255, 255, 255, 0.08);
+             box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+             border-color: #00b4d8;
+         }
+         #modalCommentForm button[type="submit"] {
+             padding: 10px 20px;
+             border-radius: 8px;
+             background: linear-gradient(45deg, #00b4d8, #0077b6);
+             color: #fff;
+             border: none;
+             font-weight: bold;
+             font-size: 16px;
+             transition: background 0.3s, box-shadow 0.3s;
+             text-transform: uppercase;
+             letter-spacing: 1px;
+         }
+          #modalCommentForm button[type="submit"]:hover {
+             background: linear-gradient(45deg, #0077b6, #023e8a);
+             box-shadow: 0 0 15px rgba(0, 180, 216, 0.8);
+         }
+         #closeModalBtn {
+             color: #aaa;
+             transition: color 0.2s;
+         }
+          #closeModalBtn:hover {
+              color: #fff;
+          }
+
+        /* Comments styling within modal (similar to admin) */
+         .comment-bubble {
+             background: rgba(255, 255, 255, 0.08); /* Slightly transparent background */
+             border-radius: 8px;
+             padding: 12px;
+             margin-bottom: 8px;
+             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+              border: 1px solid rgba(255, 255, 255, 0.1);
+         }
+         .comment-author {
+             color: #e0e0e0; /* Lighter color */
+             font-weight: 600;
+             font-size: 13px;
+         }
+         .comment-time {
+             color: #6b778c; /* Subtle color */
+             font-size: 12px;
+             margin-left: 8px;
+         }
+         .comment-content {
+             margin-top: 4px;
+             color: #b0b0b0; /* Lighter color */
+             font-size: 13px;
+             line-height: 1.4;
+         }
+          /* Status badges within comments */
+         .comment-bubble .status-badge {
+             display: inline-block;
+             padding: 2px 8px;
+             border-radius: 8px;
+             font-size: 10px;
+             font-weight: 600;
+             text-transform: uppercase;
+             margin-left: 8px;
+             margin-right: 0;
+         }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Support Dashboard</h2>
+            <button id="logoutButton">Logout</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search tickets by title or description...">
+            <button onclick="fetchTickets()">Search</button>
+        </div>
+        <h3>Tickets List</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Created By</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="ticketsTable">
+            <!-- Tickets will be loaded here -->
+            </tbody>
+        </table>
+        <div class="footer">
+            <p>&copy; 2024 Support Ticket System. All rights reserved.</p>
+        </div>
+    </div>
+    <div id="commentModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:8px; max-width:500px; width:90vw; margin:60px auto; padding:24px; position:relative; box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+            <button id="closeModalBtn" style="position:absolute; right:12px; top:8px; background:none; border:none; font-size:28px; cursor:pointer; color:#aaa;">&times;</button>
+            <h3>Comments</h3>
+            <div id="modalCommentsList" style="max-height:300px; overflow-y:auto; margin-bottom:12px;"></div>
+            <form id="modalCommentForm" style="margin-top:10px;">
+                <textarea id="modalCommentInput" placeholder="Add a comment..." required rows="2" style="width:100%; border-radius:8px; padding:8px;"></textarea>
+                <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+                    <select id="modalCommentStatus" style="flex:1; border-radius:8px; padding:6px;">
+                        <option value="open">Open</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                    <button type="submit" style="padding:8px 18px; border-radius:8px; background:#007BFF; color:#fff; border:none; font-weight:bold;">Comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        let ticketsCache = [];
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchTickets();
+            document.getElementById('logoutButton').addEventListener('click', function () {
+                localStorage.removeItem('token');
+                window.location.href = '/login.html';
+            });
+            document.getElementById('searchInput').addEventListener('input', function () {
+                renderTickets();
+            });
+        });
+
+        async function fetchTickets() {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/tickets', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            if (data.success && Array.isArray(data.tickets)) {
+                ticketsCache = data.tickets;
+                renderTickets();
+            } else {
+                document.getElementById('ticketsTable').innerHTML = '<tr><td colspan="6">Failed to fetch tickets.</td></tr>';
+            }
+        }
+
+        function renderTickets() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            let filtered = ticketsCache;
+            if (search) {
+                filtered = ticketsCache.filter(ticket =>
+                    ticket.title.toLowerCase().includes(search) ||
+                    ticket.description.toLowerCase().includes(search)
+                );
+            }
+            document.getElementById('ticketsTable').innerHTML = filtered.length ? filtered.map(ticket => `
+                <tr>
+                    <td><div class="ticket-title">${ticket.title}</div><div class="ticket-description">${ticket.description}</div></td>
+                    <td>
+                        <span class="status-badge status-${ticket.status}">${ticket.status.replace('_', ' ')}</span>
+                    </td>
+                    <td>${ticket.assignedTo ? ticket.assignedTo.name : 'Unassigned'}</td>
+                    <td>${ticket.createdBy ? ticket.createdBy.name : ''}</td>
+                    <td>
+                        <button onclick="viewComments('${ticket._id}')">Comments</button>
+                    </td>
+                </tr>
+            `).join('') : '<tr><td colspan="6">No tickets found.</td></tr>';
+        }
+
+        window.changeStatus = async function(ticketId, status) {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`/api/tickets/${ticketId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    alert('Failed to update status: ' + (data.message || 'Unknown error'));
+                } else {
+                    fetchTickets();
+                }
+            } catch (err) {
+                alert('Error updating status.');
+            }
+        }
+
+        window.viewComments = async function(ticketId) {
+            // 显示模态框
+            document.getElementById('commentModal').style.display = 'flex';
+            document.getElementById('modalCommentInput').value = '';
+            // 记录当前 ticketId
+            window._currentTicketId = ticketId;
+            await loadComments(ticketId);
+        }
+        document.getElementById('closeModalBtn').onclick = function() {
+            document.getElementById('commentModal').style.display = 'none';
+        };
+        async function loadComments(ticketId) {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`/api/tickets/${ticketId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            const comments = (data.data && data.data.comments) || [];
+            const ticketStatus = data.data && data.data.status;
+            const usersMap = {};
+            // 预加载所有用户用于显示名字
+            const usersRes = await fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } });
+            const usersData = await usersRes.json();
+            if (usersData.success) {
+                usersData.data.forEach(u => { usersMap[u._id] = u.name; });
+            }
+            document.getElementById('modalCommentsList').innerHTML = comments.length ? comments.map(c => `
+                <div class='comment-bubble'>
+                    <div>
+                        <span class='comment-author'>${usersMap[c.author] || c.author || 'User'}</span>
+                        <span class='comment-time'>${new Date(c.createdAt).toLocaleString()}</span>
+                    </div>
+                    <div class='comment-content'>${c.content}</div>
+                    ${c.status ? `<span class='status-badge status-${c.status}'>${(c.status).replace('_',' ')}</span>` : ''}
+                </div>
+            `).join('') : '<div style="color:#6b778c;">No comments yet.</div>';
+
+             // Set status select in modal to the ticket status if no comment status exists
+             document.getElementById('modalCommentStatus').value = ticketStatus || 'open';
+        }
+        document.getElementById('modalCommentForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const ticketId = window._currentTicketId;
+            const token = localStorage.getItem('token');
+            const content = document.getElementById('modalCommentInput').value;
+            const status = document.getElementById('modalCommentStatus').value;
+            if (!content) return false;
+            try {
+                const response = await fetch(`/api/tickets/${ticketId}/comments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ content, status })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('modalCommentInput').value = '';
+                    await loadComments(ticketId);
+                    fetchTickets();
+                } else {
+                    alert('Failed to add comment: ' + (data.message || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Error adding comment.');
+            }
+            return false;
+        }
+    </script>
+</body>
+</html> 

@@ -69,6 +69,7 @@
     <h1>Support Ticket System</h1>
     <div id="loginFormContainer">
         <h2>Login</h2>
+        <div id="loginErrorMsg" style="color: red; margin-bottom: 10px; display: none;"></div>
         <form id="loginForm">
             <div class="form-group">
                 <label for="email">Email:</label>
@@ -78,7 +79,7 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" required>
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" id="loginBtn">Login <span id="loginLoading" style="display:none;">...</span></button>
         </form>
         <div class="toggle-form">
             <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
@@ -87,7 +88,12 @@
 
     <div id="registerFormContainer" style="display: none;">
         <h2>Register</h2>
+        <div id="registerErrorMsg" style="color: red; margin-bottom: 10px; display: none;"></div>
         <form id="registerForm">
+            <div class="form-group">
+                <label for="regName">Name:</label>
+                <input type="text" id="regName" required>
+            </div>
             <div class="form-group">
                 <label for="regEmail">Email:</label>
                 <input type="email" id="regEmail" required>
@@ -100,7 +106,15 @@
                 <label for="regConfirmPassword">Confirm Password:</label>
                 <input type="password" id="regConfirmPassword" required>
             </div>
-            <button type="submit">Register</button>
+            <div class="form-group">
+                <label for="regRole">Role:</label>
+                <select id="regRole" required>
+                    <option value="customer">Customer</option>
+                    <option value="support">Support</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <button type="submit" id="registerBtn">Register <span id="registerLoading" style="display:none;">...</span></button>
         </form>
         <div class="toggle-form">
             <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
@@ -109,11 +123,27 @@
 </div>
 
 <script>
+    function showErrorMsg(id, msg) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.style.display = 'block';
+        setTimeout(() => { el.style.display = 'none'; }, 5000);
+    }
+    function clearErrorMsg(id) {
+        const el = document.getElementById(id);
+        el.textContent = '';
+        el.style.display = 'none';
+    }
+
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
+        const loginBtn = document.getElementById('loginBtn');
+        const loginLoading = document.getElementById('loginLoading');
+        loginBtn.disabled = true;
+        loginLoading.style.display = 'inline';
+        clearErrorMsg('loginErrorMsg');
         try {
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -122,71 +152,82 @@
                 },
                 body: JSON.stringify({ email, password })
             });
-
             const data = await response.json();
-            console.log('Login response:', data);
             if (data.success) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userId', data.userId);
                 localStorage.setItem('role', data.role);
-
                 if (data.role === 'admin') {
                     window.location.href = '/admin.html';
                 } else if (data.role === 'customer') {
                     window.location.href = '/customer.html';
                 }
             } else {
-                alert('Error: ' + data.message);
+                showErrorMsg('loginErrorMsg', data.message || 'Login failed.');
             }
         } catch (error) {
-            console.error('Login error:', error);
-            alert('An error occurred during login.');
+            showErrorMsg('loginErrorMsg', 'An error occurred during login.');
+        } finally {
+            loginBtn.disabled = false;
+            loginLoading.style.display = 'none';
         }
     });
 
     document.getElementById('registerForm').addEventListener('submit', async function (e) {
         e.preventDefault();
+        const name = document.getElementById('regName').value;
         const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPassword').value;
         const confirmPassword = document.getElementById('regConfirmPassword').value;
-
+        const role = document.getElementById('regRole').value;
+        const registerBtn = document.getElementById('registerBtn');
+        const registerLoading = document.getElementById('registerLoading');
+        registerBtn.disabled = true;
+        registerLoading.style.display = 'inline';
+        clearErrorMsg('registerErrorMsg');
         if (password !== confirmPassword) {
-            alert('Passwords do not match.');
+            showErrorMsg('registerErrorMsg', 'Passwords do not match.');
+            registerBtn.disabled = false;
+            registerLoading.style.display = 'none';
             return;
         }
-
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ name, email, password, role })
             });
-
             const data = await response.json();
-            console.log('Register response:', data);
             if (data.success) {
-                alert('Registration successful! You can now log in.');
-                document.getElementById('registerFormContainer').style.display = 'none';
-                document.getElementById('loginFormContainer').style.display = 'block';
+                showErrorMsg('registerErrorMsg', 'Registration successful! You can now log in.');
+                setTimeout(() => {
+                    document.getElementById('registerFormContainer').style.display = 'none';
+                    document.getElementById('loginFormContainer').style.display = 'block';
+                    clearErrorMsg('registerErrorMsg');
+                }, 1500);
             } else {
-                alert('Error: ' + data.message);
+                showErrorMsg('registerErrorMsg', data.message || 'Registration failed.');
             }
         } catch (error) {
-            console.error('Registration error:', error);
-            alert('An error occurred during registration.');
+            showErrorMsg('registerErrorMsg', 'An error occurred during registration.');
+        } finally {
+            registerBtn.disabled = false;
+            registerLoading.style.display = 'none';
         }
     });
 
     document.getElementById('showRegister').addEventListener('click', function () {
         document.getElementById('loginFormContainer').style.display = 'none';
         document.getElementById('registerFormContainer').style.display = 'block';
+        clearErrorMsg('loginErrorMsg');
     });
 
     document.getElementById('showLogin').addEventListener('click', function () {
         document.getElementById('registerFormContainer').style.display = 'none';
         document.getElementById('loginFormContainer').style.display = 'block';
+        clearErrorMsg('registerErrorMsg');
     });
 </script>
 </body>

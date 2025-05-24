@@ -20,6 +20,7 @@ exports.protect = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = await User.findById(decoded.user.id);
+        console.log('Authenticated user:', req.user);
 
         if (!req.user) {
             return res.status(404).json({ success: false, message: 'No user found with this id' });

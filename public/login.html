@@ -3,31 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Tech Support</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 300px; margin: 50px auto; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; }
-        input { width: 100%; padding: 8px; }
-        button { padding: 10px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrollbar from background */
+            position: relative;
+        }
+
+        /* Optional: Add some background elements for tech feel */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzEiIGhlaWdodD0iNzEiIHZpZXdCb3g9IjAgMCA3MSA3MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTM1LjUgMFY3MU03MSAzNS41SDBNMzUuNSA3MVYwTDcxdjM1LjVMMCAzNS41VjBNMzUuNSAwTDAgMzUuNUwzNS41IDcxTDcxIDM1LjVMMzUuNSAwWiIgc3Ryb2tlPSIjMUYzQzQ5IiBzdHJva2Utb3BhY2l0eT0iMC4xMiIvPgo8L3N2Zz4='); /* Subtle grid pattern */
+            opacity: 0.3;
+            pointer-events: none;
+            animation: backgroundPan 60s infinite linear;
+        }
+
+         @keyframes backgroundPan {
+             0% { background-position: 0% 0%; }
+             100% { background-position: 100% 100%; }
+         }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.08); /* Slightly transparent white */
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+            backdrop-filter: blur(10px); /* Glassmorphism effect */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00b4d8;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-shadow: 0 0 8px #00b4d8;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b0b0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+            box-sizing: border-box;
+        }
+
+        input[type="email"]::placeholder, input[type="password"]::placeholder {
+            color: #a0a0a0;
+        }
+
+        input[type="email"]:focus, input[type="password"]:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #00b4d8, #0077b6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button[type="submit"]:hover {
+            background: linear-gradient(45deg, #0077b6, #023e8a);
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.8);
+        }
+
+        .register-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #00b4d8;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .register-link a:hover {
+            color: #90e0ef;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>Login</h2>
+<div class="login-container">
+    <h2>System Login</h2>
     <form id="loginForm">
         <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
+            <label for="email"><i class="fas fa-envelope"></i> Email:</label>
+            <input type="email" id="email" required placeholder="Enter your email">
         </div>
         <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
+            <label for="password"><i class="fas fa-lock"></i> Password:</label>
+            <input type="password" id="password" required placeholder="Enter your password">
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Login <i class="fas fa-sign-in-alt"></i></button>
     </form>
-    <p>Don't have an account? <a href="/register.html">Register</a></p>
+    <p class="register-link">Don't have an account? <a href="/register.html">Register here</a></p>
 </div>
 <script>
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
@@ -57,6 +180,8 @@
                     window.location.href = '/admin.html';
                 } else if (data.role === 'customer') {
                     window.location.href = '/customer.html';
+                } else if (data.role === 'support') {
+                    window.location.href = '/support.html';
                 }
             } else {
                 alert('Error: ' + data.message);

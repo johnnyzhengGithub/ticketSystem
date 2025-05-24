@@ -24,7 +24,15 @@ const TicketSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    comments: [
+        {
+            content: { type: String, required: true },
+            author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+            createdAt: { type: Date, default: Date.now },
+            status: { type: String, enum: ['open', 'in_progress', 'closed'], required: false }
+        }
+    ]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Ticket', TicketSchema);

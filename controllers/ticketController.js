@@ -34,7 +34,7 @@ exports.getTickets = async (req, res) => {
             query = Ticket.find({ createdBy: req.user._id });
         }
         // If the user is an admin or support agent, show all tickets
-        else if (req.user.role === 'admin') {
+        else if (req.user.role === 'admin' || req.user.role === 'support') {
             query = Ticket.find();
         }
         // If the user role is not recognized, deny access
@@ -91,6 +91,33 @@ exports.deleteTicket = async (req, res) => {
         }
 
         res.status(200).json({ success: true, data: {} });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+// @desc    Add a comment to a ticket and optionally change status
+// @route   POST /api/tickets/:id/comments
+// @access  Private/Admin
+exports.addComment = async (req, res) => {
+    const { content, status } = req.body;
+    try {
+        const ticket = await Ticket.findById(req.params.id);
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+        const comment = {
+            content,
+            author: req.user._id,
+            status: status || ticket.status
+        };
+        ticket.comments.push(comment);
+        if (status && status !== ticket.status) {
+            ticket.status = status;
+        }
+        await ticket.save();
+        res.status(200).json({ success: true, data: ticket });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server Error');

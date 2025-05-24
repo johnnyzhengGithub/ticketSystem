@@ -6,411 +6,1115 @@
     <title>Admin Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@400;700&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e0e0e0;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+            position: relative;
+            flex-direction: column; /* Allow content to stack vertically if needed */
         }
+
+        /* Optional: Add some background elements for tech feel */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzEiIGhlaWdodD0iNzEiIHZpZXdCb3g9IjAgMCA3MSA3MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTM1LjUgMFY3MU03MSAzNS41SDBNMzUuNSA3MVYwTDcxdjM1LjVMMCAzNS41VjBNMzUuNSAwTDAgMzUuNUwzNS41IDcxTDcxIDM1LjVMMzUuNSAwWiIgc3Ryb2tlPSIjMUYzQzQ5IiBzdHJva2Utb3BhY2l0eT0iMC4xMiIvPgo8L3N2Zz4='); /* Subtle grid pattern */
+            opacity: 0.3;
+            pointer-events: none;
+            animation: backgroundPan 60s infinite linear;
+        }
+
+         @keyframes backgroundPan {
+             0% { background-position: 0% 0%; }
+             100% { background-position: 100% 100%; }
+         }
+
         .container {
             width: 90%;
             max-width: 1200px;
             margin: 50px auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.08); /* Slightly transparent white */
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+            backdrop-filter: blur(10px); /* Glassmorphism effect */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+            padding: 40px; /* Increased padding for content */
+            position: relative;
+            z-index: 1;
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #007BFF;
-            padding-bottom: 10px;
+            border-bottom: 2px solid #00b4d8; /* High-tech color */
+            padding-bottom: 15px; /* Increased padding */
+            margin-bottom: 25px; /* Increased margin */
         }
         .header h2 {
+            font-family: 'Orbitron', sans-serif;
             margin: 0;
-            color: #007BFF;
+            color: #00b4d8; /* High-tech color */
+            font-size: 28px; /* Larger font size */
+            text-shadow: 0 0 8px #00b4d8; /* Glow effect */
         }
         button {
-            padding: 10px 15px;
-            background-color: #007BFF;
+            padding: 10px 20px; /* Increased padding */
+            background: linear-gradient(45deg, #00b4d8, #0077b6); /* Gradient button */
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px; /* Rounded corners */
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
+            font-weight: bold; /* Bold text */
+            transition: all 0.3s ease-in-out; /* Smooth transition */
+            text-transform: uppercase; /* Uppercase text */
+            letter-spacing: 1px; /* Increased letter spacing */
         }
         button:hover {
-            background-color: #0056b3;
+            background: linear-gradient(45deg, #0077b6, #023e8a); /* Darker gradient on hover */
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.8); /* Stronger glow on hover */
         }
+        /* Enhanced table styles */
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0; /* Increased margin */
+            background: rgba(255, 255, 255, 0.05); /* Slightly transparent background */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
+            padding: 16px; /* Increased padding */
             text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Lighter border for dark theme */
+            color: #e0e0e0; /* Lighter text color */
         }
         th {
-            background-color: #007BFF;
-            color: white;
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly darker header background */
+            color: #90e0ef; /* Highlight color for headers */
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px; /* Increased letter spacing */
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.08); /* Subtle hover effect */
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px; /* Increased margin */
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
+            margin-bottom: 8px;
+            color: #b0b0b0; /* Lighter color */
+            font-size: 14px;
+            font-weight: bold;
         }
         input, select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 12px 15px; /* Increased padding */
+            border: none; /* Removed default border */
+            border-radius: 8px; /* Rounded corners */
+            background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+            color: #ffffff; /* White text color */
+            font-size: 16px;
+            transition: all 0.3s ease-in-out; /* Smooth transitions */
+            box-sizing: border-box;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+         input:focus, select:focus {
+             outline: none;
+             background: rgba(255, 255, 255, 0.2);
+             box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+             border-color: #00b4d8;
         }
         .hidden {
             display: none;
         }
         .section-title {
             margin-top: 30px;
-            color: #333;
+            color: #00b4d8; /* High-tech color */
+            border-bottom: 1px solid rgba(0, 180, 216, 0.3); /* Subtle border */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
         }
         .footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 40px; /* Increased margin */
             font-size: 14px;
-            color: #777;
+            color: #6b778c; /* Subtle color */
+        }
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-open { background: #28a745; color: #fff; }
+        .status-in_progress { background: #ffc107; color: #333; }
+        .status-closed { background: #dc3545; color: #fff; }
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .action-buttons button {
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-transform: none; /* Revert uppercase for small buttons */
+             letter-spacing: normal;
+             font-weight: normal;
+        }
+        .action-buttons .edit {
+            background: #0077b6; /* Darker blue */
+            color: #e6f4ff;
+        }
+        .action-buttons .edit:hover {
+            background: #023e8a; /* Even darker blue */
+        }
+        .action-buttons .delete {
+            background: #dc3545; /* Red */
+            color: #ffecec;
+        }
+        .action-buttons .delete:hover {
+            background: #c82333; /* Darker red */
+        }
+         .action-buttons .expand-button, .action-buttons .ai-helper-button {
+             background: none;
+             border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+             color: #90e0ef; /* Light blue color */
+             padding: 6px 10px;
+             font-size: 13px;
+             border-radius: 4px;
+             text-transform: none;
+             letter-spacing: normal;
+             font-weight: normal;
+        }
+         .action-buttons .expand-button:hover, .action-buttons .ai-helper-button:hover {
+             background: rgba(0, 180, 216, 0.2); /* Subtle hover background */
+             color: #ffffff;
+             box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
+        }
+        /* Ticket title and description */
+        .ticket-title {
+            font-weight: 600;
+            color: #90e0ef; /* Highlight color */
+            margin-bottom: 4px;
+        }
+        .ticket-description {
+            color: #b0b0b0; /* Lighter color for readability */
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        /* Assigned user */
+        .assigned-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0, 180, 216, 0.3); /* Semi-transparent blue background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #ffffff; /* White text */
+            font-weight: 600;
+        }
+        .user-info {
+            font-size: 13px;
+        }
+        .user-name {
+            color: #e0e0e0; /* Lighter color */
+            font-weight: 500;
+        }
+        .user-role {
+            color: #6b778c; /* Subtle color */
+            font-size: 12px;
+        }
+        /* Comments section enhancement */
+        .comments-section {
+            background: rgba(255, 255, 255, 0.05); /* Slightly transparent background */
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 8px;
+            animation: slideDown 0.2s ease-out;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .comments-section.expanded {
+            display: block;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .comments-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #90e0ef; /* Highlight color */
+        }
+        .comment-bubble {
+            background: rgba(255, 255, 255, 0.08); /* Slightly transparent background */
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .comment-author {
+            color: #e0e0e0; /* Lighter color */
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .comment-time {
+            color: #6b778c; /* Subtle color */
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        .comment-content {
+            margin-top: 4px;
+            color: #b0b0b0; /* Lighter color */
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .comment-form textarea {
+            width: 100%;
+            min-height: 60px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            resize: vertical;
+            background: rgba(255, 255, 255, 0.05); /* Semi-transparent background */
+            color: #ffffff; /* White text */
+        }
+        .comment-form textarea:focus {
+             outline: none;
+             background: rgba(255, 255, 255, 0.08);
+             box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+             border-color: #00b4d8;
+        }
+        .comment-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .comment-actions select {
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+            border-radius: 4px;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.05); /* Semi-transparent background */
+            color: #ffffff; /* White text */
+        }
+         .comment-actions select:focus {
+             outline: none;
+             background: rgba(255, 255, 255, 0.08);
+             box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+             border-color: #00b4d8;
+        }
+        .comment-actions button {
+            padding: 6px 16px;
+            font-size: 13px;
+        }
+        /* AI Helper section styles */
+        .ai-helper-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 180, 216, 0.1); /* Light blue semi-transparent background */
+            border: 1px solid rgba(0, 180, 216, 0.3); /* Blue border */
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            animation: slideDown 0.2s ease-out;
+        }
+        .ai-helper-section.expanded {
+            display: block;
+        }
+        .ai-helper-section h5 {
+            margin-top: 0;
+            color: #90e0ef; /* Highlight color */
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+        }
+        .ai-helper-content {
+            font-size: 13px;
+            color: #b0b0b0; /* Lighter color */
+            line-height: 1.6;
+        }
+
+        /* User Modal Styles (Adjusting for dark theme) */
+        #userModal > div {
+             background: rgba(255, 255, 255, 0.08); /* Semi-transparent background */
+             border-radius: 15px;
+             box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+             backdrop-filter: blur(10px);
+             -webkit-backdrop-filter: blur(10px);
+             border: 1px solid rgba( 255, 255, 255, 0.18 );
+        }
+        #userModalTitle {
+             font-family: 'Orbitron', sans-serif;
+             color: #00b4d8;
+             text-shadow: 0 0 8px #00b4d8;
+             margin-bottom: 20px;
+        }
+        #userModal label {
+             color: #b0b0b0;
+        }
+        #userModal input, #userModal select {
+             background: rgba(255, 255, 255, 0.1);
+             color: #ffffff;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+         #userModal input:focus, #userModal select:focus {
+             background: rgba(255, 255, 255, 0.2);
+             box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+             border-color: #00b4d8;
+        }
+        #userModal button[type="submit"] {
+             background: linear-gradient(45deg, #00b4d8, #0077b6);
+             color: white;
+             font-weight: bold;
+             text-transform: uppercase;
+             letter-spacing: 1px;
+        }
+        #userModal button[type="submit"]:hover {
+             background: linear-gradient(45deg, #0077b6, #023e8a);
+             box-shadow: 0 0 15px rgba(0, 180, 216, 0.8);
+        }
+         #userModal #closeUserModalBtn {
+             color: #aaa;
+             transition: color 0.2s;
+        }
+         #userModal #closeUserModalBtn:hover {
+             color: #fff;
+        }
+
+        /* Styles for Tabs (Adjusting for dark theme) */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #00b4d8; /* High-tech color */
+        }
+        .tabs button {
+            padding: 10px 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05); /* Inactive tab background (semi-transparent) */
+            color: #e0e0e0; /* Lighter text color */
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px 8px 0 0; /* Rounded top corners */
+            margin-right: 5px;
+            transition: background-color 0.3s, color 0.3s;
+             font-weight: normal; /* Revert bold */
+             text-transform: none; /* Revert uppercase */
+             letter-spacing: normal; /* Revert letter spacing */
+        }
+        .tabs button.active {
+            background: rgba(0, 180, 216, 0.3); /* Active tab background (semi-transparent blue) */
+            color: #ffffff; /* White text */
+             box-shadow: 0 -2px 10px rgba(0, 180, 216, 0.5); /* Glow effect on active tab */
+        }
+         .tabs button:hover:not(.active) {
+             background: rgba(255, 255, 255, 0.1); /* Subtle hover for inactive */
+        }
+        /* Styles for main sections (Adjusting for dark theme) */
+        .admin-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.08); /* Semi-transparent background */
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+        }
+        /* Hide inactive sections */
+        .admin-section:not(.active) {
+            display: none;
+        }
+        .admin-section h3 {
+            color: #00b4d8; /* High-tech color */
+            border-bottom: 1px solid rgba(0, 180, 216, 0.3); /* Subtle border */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+             font-family: 'Orbitron', sans-serif;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h2>Admin Dashboard</h2>
-        <button id="logoutButton">Logout</button>
+    <div class="container">
+        <div class="header">
+            <h2>Admin Dashboard</h2>
+            <button id="logoutButton">Logout</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" data-section="userManagementSection">User Management</button>
+            <button class="tab-button" data-section="ticketManagementSection">Ticket Management</button>
+        </div>
+
+        <div id="userManagementSection" class="admin-section active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 class="section-title" style="margin:0; padding:0; border:none;">User Management</h3>
+                <button id="addUserButton">Add User</button>
+            </div>
+            <form id="userForm" class="hidden">
+                <input type="hidden" id="userId">
+                <div class="form-group">
+                    <label for="userName">Name:</label>
+                    <input type="text" id="userName" required>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Email:</label>
+                    <input type="email" id="userEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userPassword">Password:</label>
+                    <input type="password" id="userPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="userRole">Role:</label>
+                    <select id="userRole" required>
+                        <option value="admin">Admin</option>
+                        <option value="support">Support</option>
+                        <option value="customer">Customer</option>
+                    </select>
+                </div>
+                <button type="submit">Save User</button>
+            </form>
+            <h4>Users List</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="usersTable">
+                <!-- Users will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="ticketManagementSection" class="admin-section">
+            <h3 class="section-title">Ticket Management</h3>
+            <form id="ticketForm">
+                <input type="hidden" id="ticketId">
+                <div class="form-group">
+                    <label for="ticketTitle">Title:</label>
+                    <input type="text" id="ticketTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="ticketDescription">Description:</label>
+                    <input type="text" id="ticketDescription" required>
+                </div>
+                <div class="form-group">
+                    <label for="ticketStatus">Status:</label>
+                    <select id="ticketStatus" required>
+                        <option value="open">Open</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ticketAssignedTo">Assigned To:</label>
+                    <select id="ticketAssignedTo">
+                        <option value="">Unassigned</option>
+                    </select>
+                </div>
+                <button type="submit">Save Ticket</button>
+            </form>
+            <h4>Tickets List</h4>
+            <table>
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Created By</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="ticketsTable">
+                <!-- Tickets will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 Support Ticket System. All rights reserved.</p>
+        </div>
     </div>
 
-    <div id="userManagementSection">
-        <h3 class="section-title">User Management</h3>
-        <form id="userForm">
-            <input type="hidden" id="userId">
-            <div class="form-group">
-                <label for="userName">Name:</label>
-                <input type="text" id="userName" required>
-            </div>
-            <div class="form-group">
-                <label for="userEmail">Email:</label>
-                <input type="email" id="userEmail" required>
-            </div>
-            <div class="form-group">
-                <label for="userPassword">Password:</label>
-                <input type="password" id="userPassword">
-            </div>
-            <div class="form-group">
-                <label for="userRole">Role:</label>
-                <select id="userRole" required>
-                    <option value="customer">Customer</option>
-                    <option value="support">Support</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
-            <button type="submit">Save User</button>
-        </form>
-        <h4>Users List</h4>
-        <table>
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody id="usersTable">
-            <!-- Users will be loaded here -->
-            </tbody>
-        </table>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userForm = document.getElementById('userForm');
+            const usersTable = document.getElementById('usersTable');
+            const ticketsTable = document.getElementById('ticketsTable');
+            const userIdInput = document.getElementById('userId');
+            const userNameInput = document.getElementById('userName');
+            const userEmailInput = document.getElementById('userEmail');
+            const userPasswordInput = document.getElementById('userPassword');
+            const userRoleInput = document.getElementById('userRole');
 
-    <h3 class="section-title">Ticket Management</h3>
-    <form id="ticketForm">
-        <input type="hidden" id="ticketId">
-        <div class="form-group">
-            <label for="ticketTitle">Title:</label>
-            <input type="text" id="ticketTitle" required>
-        </div>
-        <div class="form-group">
-            <label for="ticketDescription">Description:</label>
-            <input type="text" id="ticketDescription" required>
-        </div>
-        <div class="form-group">
-            <label for="ticketStatus">Status:</label>
-            <select id="ticketStatus" required>
-                <option value="open">Open</option>
-                <option value="in_progress">In Progress</option>
-                <option value="closed">Closed</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="ticketAssignedTo">Assigned To:</label>
-            <select id="ticketAssignedTo">
-                <option value="">Unassigned</option>
-            </select>
-        </div>
-        <button type="submit">Save Ticket</button>
-    </form>
-    <h4>Tickets List</h4>
-    <table>
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Assigned To</th>
-            <th>Created By</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody id="ticketsTable">
-        <!-- Tickets will be loaded here -->
-        </tbody>
-    </table>
+            const ticketForm = document.getElementById('ticketForm');
+            const ticketIdInput = document.getElementById('ticketId');
+            const ticketTitleInput = document.getElementById('ticketTitle');
+            const ticketDescriptionInput = document.getElementById('ticketDescription');
+            const ticketStatusInput = document.getElementById('ticketStatus');
+            const ticketAssignedToInput = document.getElementById('ticketAssignedTo');
 
-    <div class="footer">
-        <p>&copy; 2024 Support Ticket System. All rights reserved.</p>
-    </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const userForm = document.getElementById('userForm');
-        const usersTable = document.getElementById('usersTable');
-        const ticketsTable = document.getElementById('ticketsTable');
-        const userIdInput = document.getElementById('userId');
-        const userNameInput = document.getElementById('userName');
-        const userEmailInput = document.getElementById('userEmail');
-        const userPasswordInput = document.getElementById('userPassword');
-        const userRoleInput = document.getElementById('userRole');
-
-        const ticketForm = document.getElementById('ticketForm');
-        const ticketIdInput = document.getElementById('ticketId');
-        const ticketTitleInput = document.getElementById('ticketTitle');
-        const ticketDescriptionInput = document.getElementById('ticketDescription');
-        const ticketStatusInput = document.getElementById('ticketStatus');
-        const ticketAssignedToInput = document.getElementById('ticketAssignedTo');
-
-        // Fetch users and populate table
-        async function fetchUsers() {
-            const token = localStorage.getItem('token');
-            const response = await fetch('/api/users', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const users = await response.json();
-            if (users.success) {
-                usersTable.innerHTML = users.data.map(user => `
-                    <tr>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.role}</td>
-                        <td>
-                            <button class="edit" onclick="editUser('${user._id}')">Edit</button>
-                            <button class="delete" onclick="deleteUser('${user._id}')">Delete</button>
-                        </td>
-                    </tr>
-                `).join('');
-                users.data.forEach(user => {
-                    if (user.role === 'admin') {
-                        ticketAssignedToInput.innerHTML += `<option value="${user._id}">${user.name}</option>`;
-                    }
-                });
-            } else {
-                console.error('Failed to fetch users:', users.message);
-            }
-        }
-
-        // Fetch tickets and populate table
-        async function fetchTickets() {
-            const token = localStorage.getItem('token');
-            const response = await fetch('/api/tickets', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const tickets = await response.json();
-            if (tickets.success && Array.isArray(tickets.tickets)) {
-                ticketsTable.innerHTML = tickets.tickets.map(ticket => `
-            <tr>
-                <td>${ticket.title}</td>
-                <td>${ticket.description}</td>
-                <td>${ticket.status}</td>
-                <td>${ticket.assignedTo ? ticket.assignedTo.name : ''}</td>
-                <td>${ticket.createdBy ? ticket.createdBy.name : ''}</td>
-                <td>
-                    <button class="edit" onclick="editTicket('${ticket._id}')">Edit</button>
-                    <button class="delete" onclick="deleteTicket('${ticket._id}')">Delete</button>
-                </td>
-            </tr>
-        `).join('');
-            } else {
-                console.error('Failed to fetch tickets or no tickets available:', tickets.message);
-            }
-        }
-
-        // Function to edit a ticket
-        window.editTicket = async function (id) {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`/api/tickets/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const ticket = await response.json();
-            if (ticket.success) {
-                ticketIdInput.value = ticket.data._id;
-                ticketTitleInput.value = ticket.data.title;
-                ticketDescriptionInput.value = ticket.data.description;
-                ticketStatusInput.value = ticket.data.status;
-                ticketAssignedToInput.value = ticket.data.assignedTo ? ticket.data.assignedTo._id : '';
-            } else {
-                console.error('Failed to fetch ticket:', ticket.message);
-            }
-        };
-
-        // Form submission for creating or updating user
-        userForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const id = userIdInput.value;
-            const name = userNameInput.value;
-            const email = userEmailInput.value;
-            const password = userPasswordInput.value;
-            const role = userRoleInput.value;
-            const method = id ? 'PUT' : 'POST';
-            const url = id ? `/api/users/${id}` : '/api/users';
-            const token = localStorage.getItem('token');
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ name, email, password, role })
-            });
-            const data = await response.json();
-            if (data.success) {
-                alert('User saved successfully');
-                userForm.reset();
-                fetchUsers();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        });
-
-        // Edit user function
-        window.editUser = async function (id) {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`/api/users/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const user = await response.json();
-            if (user.success) {
-                userIdInput.value = user.data._id;
-                userNameInput.value = user.data.name;
-                userEmailInput.value = user.data.email;
-                userPasswordInput.value = '';
-                userRoleInput.value = user.data.role;
-            } else {
-                console.error('Failed to fetch user:', user.message);
-            }
-        };
-
-        // Function to delete a user
-        window.deleteUser = async function (id) {
-            if (confirm('Are you sure you want to delete this user?')) {
+            let assignableUsers = [];
+            async function fetchUsers() {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`/api/users/${id}`, {
-                    method: 'DELETE',
+                const response = await fetch('/api/users', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                const data = await response.json();
-                if (data.success) {
-                    alert('User deleted successfully');
-                    fetchUsers();
+                const users = await response.json();
+                if (users.success) {
+                    usersTable.innerHTML = users.data.map(user => `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.role}</td>
+                            <td>
+                                <button class="edit" onclick="editUser('${user._id}')">Edit</button>
+                                <button class="delete" onclick="deleteUser('${user._id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    ticketAssignedToInput.innerHTML = '<option value="">Unassigned</option>';
+                    assignableUsers = users.data.filter(user => user.role === 'support' || user.role === 'admin');
+                    assignableUsers.forEach(user => {
+                        ticketAssignedToInput.innerHTML += `<option value="${user._id}">${user.name} (${user.role})</option>`;
+                    });
                 } else {
-                    alert('Error: ' + data.message);
+                    console.error('Failed to fetch users:', users.message);
                 }
             }
-        };
 
-        // Form submission for creating or updating ticket
-        ticketForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const id = ticketIdInput.value;
-            const title = ticketTitleInput.value;
-            const description = ticketDescriptionInput.value;
-            const status = ticketStatusInput.value;
-            const assignedTo = ticketAssignedToInput.value;
-            const method = id ? 'PUT' : 'POST';
-            const url = id ? `/api/tickets/${id}` : '/api/tickets';
-            const token = localStorage.getItem('token');
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ title, description, status, assignedTo })
-            });
-            const data = await response.json();
-            if (data.success) {
-                alert('Ticket saved successfully');
-                ticketForm.reset();
-                fetchTickets();
-            } else {
-                alert('Error: ' + data.message);
+            async function fetchTickets() {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/tickets', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const tickets = await response.json();
+                if (tickets.success && Array.isArray(tickets.tickets)) {
+                    ticketsTable.innerHTML = tickets.tickets.map(ticket => {
+                        let assignedToSelect = `<select onchange="changeAssignedTo('${ticket._id}', this.value)" class="form-control">`;
+                        assignedToSelect += `<option value="">Unassigned</option>`;
+                        assignableUsers.forEach(user => {
+                            assignedToSelect += `<option value="${user._id}" ${ticket.assignedTo && ticket.assignedTo._id === user._id ? 'selected' : ''}>${user.name} (${user.role})</option>`;
+                        });
+                        assignedToSelect += `</select>`;
+
+                        const assignedUser = ticket.assignedTo ? `
+                            <div class="assigned-user">
+                                <div class="user-avatar">${ticket.assignedTo.name.charAt(0).toUpperCase()}</div>
+                                <div class="user-info">
+                                    <div class="user-name">${ticket.assignedTo.name}</div>
+                                    <div class="user-role">${ticket.assignedTo.role}</div>
+                                </div>
+                            </div>
+                        ` : '<span style="color: #6b778c;">Unassigned</span>';
+
+                        return `
+                        <tr>
+                            <td>
+                                <div class="ticket-title">${ticket.title}</div>
+                                <div class="ticket-description">${ticket.description}</div>
+                            </td>
+                            <td><span class="status-badge status-${ticket.status}">${ticket.status.replace('_', ' ')}</span></td>
+                            <td>${assignedUser}</td>
+                            <td>${ticket.createdBy ? ticket.createdBy.name : ''}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="edit" onclick="editTicket('${ticket._id}')">Edit</button>
+                                    <button class="delete" onclick="deleteTicket('${ticket._id}')">Delete</button>
+                                    <button class="expand-button" data-ticket-id="${ticket._id}">
+                                        <i class="fas fa-chevron-down"></i>
+                                        <span>Comments</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">
+                                <div id="comments-section-${ticket._id}" class="comments-section">
+                                    <div class="comments-header">
+                                        <div class="comments-title">Comments</div>
+                                    </div>
+                                    <div id="comments-${ticket._id}">
+                                        ${(ticket.comments && ticket.comments.length > 0) ? ticket.comments.map(c => `
+                                            <div class="comment-bubble">
+                                                <div>
+                                                    <span class="comment-author">${c.author || 'User'}</span>
+                                                    <span class="comment-time">${new Date(c.createdAt).toLocaleString()}</span>
+                                                </div>
+                                                <div class="comment-content">${c.content}</div>
+                                                ${c.status ? `<span class="status-badge status-${c.status}">${c.status.replace('_', ' ')}</span>` : ''}
+                                            </div>
+                                        `).join('') : '<div style="color:#6b778c;">No comments yet.</div>'}
+                                    </div>
+                                    <form class="comment-form" onsubmit="return submitComment(event, '${ticket._id}')">
+                                        <textarea id="comment-input-${ticket._id}" placeholder="Add a comment..." required rows="2"></textarea>
+                                        <div class="comment-actions">
+                                            <select id="comment-status-${ticket._id}">
+                                                <option value="open" ${ticket.status==='open'?'selected':''}>Open</option>
+                                                <option value="in_progress" ${ticket.status==='in_progress'?'selected':''}>In Progress</option>
+                                                <option value="closed" ${ticket.status==='closed'?'selected':''}>Closed</option>
+                                            </select>
+                                            <button type="submit">Comment</button>
+                                            <button class="ai-helper-button" data-ticket-id="${ticket._id}">
+                                                <i class="fas fa-robot"></i> AI Helper
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="ai-helper-section-${ticket._id}" class="ai-helper-section">
+                                    <h5>AI Assistance</h5>
+                                    <div class="ai-helper-content">
+                                        <!-- Placeholder for AI interaction -->
+                                        <p>AI will provide suggestions or answers here based on the ticket details and comments.</p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    }).join('');
+
+                    // Add event listeners for expand buttons
+                    document.querySelectorAll('.expand-button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const ticketId = this.getAttribute('data-ticket-id');
+                            toggleComments(ticketId);
+                        });
+                    });
+
+                    // Add event listeners for AI Helper buttons
+                    document.querySelectorAll('.ai-helper-button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const ticketId = this.getAttribute('data-ticket-id');
+                            toggleAIHelper(ticketId);
+                        });
+                    });
+
+                } else {
+                    console.error('Failed to fetch tickets or no tickets available:', tickets.message);
+                }
             }
-        });
 
-        // Function to delete a ticket
-        window.deleteTicket = async function (id) {
-            if (confirm('Are you sure you want to delete this ticket?')) {
+            window.submitComment = async function(event, ticketId) {
+                event.preventDefault();
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Please login first');
+                    window.location.href = '/login.html';
+                    return false;
+                }
+                const content = document.getElementById(`comment-input-${ticketId}`).value;
+                const status = document.getElementById(`comment-status-${ticketId}`).value;
+                if (!content) return false;
+                try {
+                    const response = await fetch(`/api/tickets/${ticketId}/comments`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ content, status })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        document.getElementById(`comment-input-${ticketId}`).value = '';
+                        fetchTickets();
+                    } else {
+                        alert('Failed to add comment: ' + (data.message || 'Unknown error'));
+                    }
+                } catch (err) {
+                    console.error('Error adding comment:', err);
+                    alert('Error adding comment. Please try again.');
+                }
+                return false;
+            }
+
+            window.editTicket = async function (id) {
                 const token = localStorage.getItem('token');
                 const response = await fetch(`/api/tickets/${id}`, {
-                    method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                const ticket = await response.json();
+                if (ticket.success) {
+                    ticketIdInput.value = ticket.data._id;
+                    ticketTitleInput.value = ticket.data.title;
+                    ticketDescriptionInput.value = ticket.data.description;
+                    ticketStatusInput.value = ticket.data.status;
+                    ticketAssignedToInput.value = ticket.data.assignedTo ? ticket.data.assignedTo._id : '';
+                } else {
+                    console.error('Failed to fetch ticket:', ticket.message);
+                }
+            };
+
+            // User Modal elements
+            const userModal = document.createElement('div');
+            userModal.id = 'userModal';
+            userModal.style.cssText = 'display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1001; align-items:center; justify-content:center;';
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = 'background:#fff; border-radius:8px; max-width:500px; width:90vw; margin:60px auto; padding:24px; position:relative; box-shadow:0 2px 10px rgba(0,0,0,0.2);';
+            
+            const closeButton = document.createElement('button');
+            closeButton.id = 'closeUserModalBtn';
+            closeButton.style.cssText = 'position:absolute; right:12px; top:8px; background:none; border:none; font-size:28px; cursor:pointer; color:#aaa;';
+            closeButton.innerHTML = '&times;';
+            
+            const modalTitle = document.createElement('h3');
+            modalTitle.id = 'userModalTitle';
+            modalTitle.textContent = 'Add User';
+            
+            modalContent.appendChild(closeButton);
+            modalContent.appendChild(modalTitle);
+            modalContent.appendChild(userForm);
+            userModal.appendChild(modalContent);
+            document.body.appendChild(userModal);
+
+            // Show Add User Modal
+            document.getElementById('addUserButton').addEventListener('click', function() {
+                userForm.reset();
+                userIdInput.value = ''; // Clear hidden ID for Add operation
+                userPasswordInput.required = true; // Password is required for new users
+                modalTitle.textContent = 'Add User';
+                userModal.style.display = 'flex';
+            });
+
+            // Close User Modal
+            closeButton.onclick = function() {
+                userModal.style.display = 'none';
+            };
+            
+            userModal.onclick = function(e) {
+                if (e.target === userModal) { // Close if click outside modal content
+                    userModal.style.display = 'none';
+                }
+            };
+
+            window.editUser = async function (id) {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/users/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const user = await response.json();
+                if (user.success) {
+                    userIdInput.value = user.data._id;
+                    userNameInput.value = user.data.name;
+                    userEmailInput.value = user.data.email;
+                    userPasswordInput.value = ''; // Do not pre-fill password
+                    userPasswordInput.required = false; // Password is not required for update
+                    userRoleInput.value = user.data.role;
+                    modalTitle.textContent = 'Edit User';
+                    userModal.style.display = 'flex';
+                } else {
+                    console.error('Failed to fetch user:', user.message);
+                }
+            };
+
+            userForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const id = userIdInput.value;
+                const name = userNameInput.value;
+                const email = userEmailInput.value;
+                const password = userPasswordInput.value;
+                const role = userRoleInput.value;
+
+                // Only include password if it's not empty
+                const userData = { name, email, role };
+                if (password) {
+                    userData.password = password;
+                }
+
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `/api/users/${id}` : '/api/users';
+                const token = localStorage.getItem('token');
+
+                try {
+                    const response = await fetch(url, {
+                        method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(userData)
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('User saved successfully');
+                        userModal.style.display = 'none'; // Close modal on success
+                        fetchUsers();
+                    } else {
+                        alert('Error: ' + (data.message || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error saving user:', error);
+                    alert('An error occurred while saving the user.');
+                }
+            });
+
+            window.deleteUser = async function (id) {
+                if (confirm('Are you sure you want to delete this user?')) {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/users/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('User deleted successfully');
+                        fetchUsers();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                }
+            };
+
+            ticketForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const id = ticketIdInput.value;
+                const title = ticketTitleInput.value;
+                const description = ticketDescriptionInput.value;
+                const status = ticketStatusInput.value;
+                const assignedTo = ticketAssignedToInput.value;
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `/api/tickets/${id}` : '/api/tickets';
+                const token = localStorage.getItem('token');
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, description, status, assignedTo })
+                });
                 const data = await response.json();
                 if (data.success) {
-                    alert('Ticket deleted successfully');
+                    alert('Ticket saved successfully');
+                    ticketForm.reset();
                     fetchTickets();
                 } else {
                     alert('Error: ' + data.message);
                 }
+            });
+
+            window.deleteTicket = async function (id) {
+                if (confirm('Are you sure you want to delete this ticket?')) {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/tickets/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Ticket deleted successfully');
+                        fetchTickets();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                }
+            };
+
+            window.logoutButton = document.getElementById('logoutButton');
+            logoutButton.addEventListener('click', function () {
+                localStorage.removeItem('token');
+                window.location.href = '/login.html';
+            });
+
+            window.changeAssignedTo = async function(ticketId, userId) {
+                const token = localStorage.getItem('token');
+                try {
+                    const response = await fetch(`/api/tickets/${ticketId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ assignedTo: userId })
+                    });
+                    const data = await response.json();
+                    if (!data.success) {
+                        alert('Failed to update assignment: ' + (data.message || 'Unknown error'));
+                    } else {
+                        fetchTickets();
+                    }
+                } catch (err) {
+                    alert('Error updating assignment.');
+                }
             }
-        };
 
-        // Logout function
-        document.getElementById('logoutButton').addEventListener('click', function () {
-            localStorage.removeItem('token');
-            window.location.href = '/login.html';
+            // Update toggleComments function
+            window.toggleComments = function(ticketId) {
+                const commentsSection = document.getElementById(`comments-section-${ticketId}`);
+                const expandButton = document.querySelector(`.expand-button[data-ticket-id="${ticketId}"]`);
+                
+                if (!commentsSection || !expandButton) {
+                    console.error('Could not find comments section or expand button for ticket:', ticketId);
+                    return;
+                }
+
+                if (commentsSection.classList.contains('expanded')) {
+                    commentsSection.classList.remove('expanded');
+                    expandButton.classList.remove('expanded');
+                } else {
+                    commentsSection.classList.add('expanded');
+                    expandButton.classList.add('expanded');
+                }
+            };
+
+            // Add toggleAIHelper function
+            window.toggleAIHelper = async function(ticketId) {
+                const aiHelperSection = document.getElementById(`ai-helper-section-${ticketId}`);
+                const aiHelperContent = aiHelperSection ? aiHelperSection.querySelector('.ai-helper-content') : null;
+                const aiHelperButton = document.querySelector(`.ai-helper-button[data-ticket-id="${ticketId}"]`);
+
+                if (!aiHelperSection || !aiHelperContent || !aiHelperButton) {
+                    console.error('Could not find AI Helper section, content area, or button for ticket:', ticketId);
+                    return;
+                }
+
+                if (aiHelperSection.classList.contains('expanded')) {
+                    // Collapse the section
+                    aiHelperSection.classList.remove('expanded');
+                    aiHelperButton.classList.remove('expanded');
+                    aiHelperContent.innerHTML = '<!-- Placeholder for AI interaction -->\n<p>AI will provide suggestions or answers here based on the ticket details and comments.</p>'; // Reset content when collapsing
+                } else {
+                    // Expand the section and fetch AI response
+                    aiHelperSection.classList.add('expanded');
+                    aiHelperButton.classList.add('expanded');
+                    aiHelperContent.innerHTML = '<p>Loading AI assistance...</p>'; // Loading message
+
+                    try {
+                        // 1. Fetch ticket details
+                        const token = localStorage.getItem('token');
+                        const ticketResponse = await fetch(`/api/tickets/${ticketId}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        const ticketData = await ticketResponse.json();
+
+                        if (ticketData.success && ticketData.data) {
+                            const { title, description } = ticketData.data;
+
+                            // 2. Call backend AI endpoint (This part needs backend implementation)
+                            // Example: Replace with your actual AI backend API call
+                            /*
+                            const aiResponse = await fetch('/api/ai/generate-solution', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}` // Pass token if your AI endpoint requires auth
+                                },
+                                body: JSON.stringify({ title, description, ticketId })
+                            });
+                            const aiResult = await aiResponse.json();
+
+                            if (aiResult.success && aiResult.solution) {
+                                aiHelperContent.innerHTML = `<p>${aiResult.solution}</p>`; // Display AI solution
+                            } else {
+                                aiHelperContent.innerHTML = '<p>Failed to get AI assistance: ' + (aiResult.message || 'Unknown error') + '</p>';
+                            }
+                            */
+
+                            // For demonstration, display the fetched ticket details instead of AI response
+                            aiHelperContent.innerHTML = `<h4>Ticket Details:</h4><p><strong>Title:</strong> ${title}</p><p><strong>Description:</strong> ${description}</p><p><em>(Replace this with actual AI response from your backend)</em></p>`;
+
+                        } else {
+                            aiHelperContent.innerHTML = '<p>Failed to fetch ticket details: ' + (ticketData.message || 'Unknown error') + '</p>';
+                        }
+                    } catch (err) {
+                        console.error('Error fetching ticket or getting AI assistance:', err);
+                        aiHelperContent.innerHTML = '<p>An error occurred while trying to get AI assistance.</p>';
+                    }
+                }
+            };
+
+            fetchUsers();
+            fetchTickets();
+
+            document.addEventListener('input', function(e) {
+                if (e.target && e.target.tagName === 'TEXTAREA') {
+                    e.target.style.height = 'auto';
+                    e.target.style.height = (e.target.scrollHeight) + 'px';
+                }
+            });
+
+            // Tab switching logic
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Deactivate all tabs and hide all sections
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.admin-section').forEach(section => section.classList.remove('active'));
+
+                    // Activate the clicked tab and show the corresponding section
+                    this.classList.add('active');
+                    const targetSectionId = this.getAttribute('data-section');
+                    document.getElementById(targetSectionId).classList.add('active');
+                });
+            });
         });
-
-        // Initial fetch of users and tickets
-        fetchUsers();
-        fetchTickets();
-    });
-</script>
+    </script>
 </body>
 </html>
