@@ -41,6 +41,10 @@ app.get('/customer', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'customer.html'));
 });
 
+app.get('/support', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'support.html'));
+});
+
 // Catch-all route
 app.get('*', (req, res) => {
     res.redirect('/login');
