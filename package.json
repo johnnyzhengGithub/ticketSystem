@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.js",
     "build": "npm run generate-html && webpack --mode production",
-    "generate-html": "mkdir -p dist && cp public/index.html dist/"
+    "generate-html": "mkdir -p dist && cp public/index.html dist/",
+    "test": "echo \"No tests specified\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
